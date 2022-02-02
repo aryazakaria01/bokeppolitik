@@ -114,8 +114,7 @@ async def check_ass(_, message: Message):
         return await message.reply_text(
             "Asisten Pra-Tersimpan Tidak Ditemukan.\n\nAnda dapat mengatur Asisten Via /play"
         )
-    else:
-        ass = _assistant["saveassistant"]
-        return await message.reply_text(
-            f"Asisten yang Disimpan Sebelumnya Ditemukan\n\nNomor Asisten {ass} "
-        )
+    ass = _assistant["saveassistant"]
+    return await message.reply_text(
+        f"Asisten yang Disimpan Sebelumnya Ditemukan\n\nNomor Asisten {ass} "
+    )

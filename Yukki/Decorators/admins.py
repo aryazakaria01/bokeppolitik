@@ -19,14 +19,16 @@ def AdminRightsCheck(mystic):
             member = await app.get_chat_member(
                 message.chat.id, message.from_user.id
             )
-            if not member.can_manage_voice_chats:
-                if message.from_user.id not in SUDOERS:
-                    token = await int_to_alpha(message.from_user.id)
-                    _check = await get_authuser_names(message.chat.id)
-                    if token not in _check:
-                        return await message.reply(
-                            "Anda tidak memiliki izin yang diperlukan untuk melakukan tindakan ini.\n\n__MEMBUTUHKAN ADMIN DENGAN HAK MENGELOLA OBROLAN SUARA__"
-                        )
+            if (
+                not member.can_manage_voice_chats
+                and message.from_user.id not in SUDOERS
+            ):
+                token = await int_to_alpha(message.from_user.id)
+                _check = await get_authuser_names(message.chat.id)
+                if token not in _check:
+                    return await message.reply(
+                        "Anda tidak memiliki izin yang diperlukan untuk melakukan tindakan ini.\n\n__MEMBUTUHKAN ADMIN DENGAN HAK MENGELOLA OBROLAN SUARA__"
+                    )
         return await mystic(_, message)
 
     return wrapper
@@ -57,17 +59,19 @@ def AdminRightsCheckCB(mystic):
             a = await app.get_chat_member(
                 CallbackQuery.message.chat.id, CallbackQuery.from_user.id
             )
-            if not a.can_manage_voice_chats:
-                if CallbackQuery.from_user.id not in SUDOERS:
-                    token = await int_to_alpha(CallbackQuery.from_user.id)
-                    _check = await get_authuser_names(
-                        CallbackQuery.from_user.id
+            if (
+                not a.can_manage_voice_chats
+                and CallbackQuery.from_user.id not in SUDOERS
+            ):
+                token = await int_to_alpha(CallbackQuery.from_user.id)
+                _check = await get_authuser_names(
+                    CallbackQuery.from_user.id
+                )
+                if token not in _check:
+                    return await CallbackQuery.answer(
+                        "Anda tidak memiliki izin yang diperlukan untuk melakukan tindakan ini.\nIzin: MENGELOLA VOICE CHATS",
+                        show_alert=True,
                     )
-                    if token not in _check:
-                        return await CallbackQuery.answer(
-                            "Anda tidak memiliki izin yang diperlukan untuk melakukan tindakan ini.\nIzin: MENGELOLA VOICE CHATS",
-                            show_alert=True,
-                        )
         return await mystic(_, CallbackQuery)
 
     return wrapper

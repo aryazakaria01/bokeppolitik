@@ -59,14 +59,16 @@ async def pr_go_back_timer(_, CallbackQuery):
     callback_data = CallbackQuery.data.strip()
     callback_request = callback_data.split(None, 1)[1]
     videoid, user_id = callback_request.split("|")
-    if await is_active_chat(CallbackQuery.message.chat.id):
-        if db_mem[CallbackQuery.message.chat.id]["videoid"] == videoid:
-            dur_left = db_mem[CallbackQuery.message.chat.id]["left"]
-            duration_min = db_mem[CallbackQuery.message.chat.id]["total"]
-            buttons = primary_markup(videoid, user_id, dur_left, duration_min)
-            await CallbackQuery.edit_message_reply_markup(
-                reply_markup=InlineKeyboardMarkup(buttons)
-            )
+    if (
+        await is_active_chat(CallbackQuery.message.chat.id)
+        and db_mem[CallbackQuery.message.chat.id]["videoid"] == videoid
+    ):
+        dur_left = db_mem[CallbackQuery.message.chat.id]["left"]
+        duration_min = db_mem[CallbackQuery.message.chat.id]["total"]
+        buttons = primary_markup(videoid, user_id, dur_left, duration_min)
+        await CallbackQuery.edit_message_reply_markup(
+            reply_markup=InlineKeyboardMarkup(buttons)
+        )
 
 
 @app.on_callback_query(filters.regex("timer_checkup_markup"))
@@ -74,19 +76,19 @@ async def timer_checkup_markup(_, CallbackQuery):
     callback_data = CallbackQuery.data.strip()
     callback_request = callback_data.split(None, 1)[1]
     videoid, user_id = callback_request.split("|")
-    if await is_active_chat(CallbackQuery.message.chat.id):
-        if db_mem[CallbackQuery.message.chat.id]["videoid"] == videoid:
-            dur_left = db_mem[CallbackQuery.message.chat.id]["left"]
-            duration_min = db_mem[CallbackQuery.message.chat.id]["total"]
-            return await CallbackQuery.answer(
-                f"Remaining {dur_left} out of {duration_min} Mins.",
-                show_alert=True,
-            )
-        return await CallbackQuery.answer(f"Not Playing.", show_alert=True)
-    else:
+    if not await is_active_chat(CallbackQuery.message.chat.id):
         return await CallbackQuery.answer(
-            f"Tidak Ada Obrolan Suara Aktif", show_alert=True
+            'Tidak Ada Obrolan Suara Aktif', show_alert=True
         )
+
+    if db_mem[CallbackQuery.message.chat.id]["videoid"] == videoid:
+        dur_left = db_mem[CallbackQuery.message.chat.id]["left"]
+        duration_min = db_mem[CallbackQuery.message.chat.id]["total"]
+        return await CallbackQuery.answer(
+            f"Remaining {dur_left} out of {duration_min} Mins.",
+            show_alert=True,
+        )
+    return await CallbackQuery.answer('Not Playing.', show_alert=True)
 
 
 @app.on_message(filters.command("queue"))
@@ -98,17 +100,13 @@ async def activevc(_, message: Message):
         duration_min = db_mem[message.chat.id]["total"]
         got_queue = get_queue.get(message.chat.id)
         if not got_queue:
-            await mystic.edit(f"Nothing in Queue")
-        fetched = []
-        for get in got_queue:
-            fetched.append(get)
-
+            await mystic.edit('Nothing in Queue')
+        fetched = list(got_queue)
         ### Results
         current_playing = fetched[0][0]
         user_name = fetched[0][1]
 
-        msg = "**Daftar Antrian**\n\n"
-        msg += "**Sedang Memutar:**"
+        msg = "**Daftar Antrian**\n\n" + "**Sedang Memutar:**"
         msg += "\n▶️" + current_playing [:30]
         msg += f"\n   ╚Oleh:- {user_name}"
         msg += f"\n   ╚Durasi:- Remaining `{dur_left}` out of `{duration_min}` Mins."
@@ -130,14 +128,15 @@ async def activevc(_, message: Message):
                 out_file.write(str(msg.strip()))
             await message.reply_document(
                 document=filename,
-                caption=f"**OUTPUT:**\n\n`Queued List`",
+                caption='**OUTPUT:**\n\n`Queued List`',
                 quote=False,
             )
+
             os.remove(filename)
         else:
             await mystic.edit(msg)
     else:
-        await message.reply_text(f"Nothing in Queue")
+        await message.reply_text('Nothing in Queue')
 
 
 @app.on_message(filters.command("activevc") & filters.user(SUDOERS))

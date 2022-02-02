@@ -64,13 +64,10 @@ async def play(_, message: Message):
             "🔄 Memproses Audio... Harap Tunggu!"
         )
         try:
-            read = db_mem[message.chat.id]["live_check"]
-            if read:
+            if read := db_mem[message.chat.id]["live_check"]:
                 return await mystic.edit(
                     "Pemutaran Live Streaming... Hentikan untuk memutar musik"
                 )
-            else:
-                pass
         except:
             pass
         if audio.file_size > 1073741824:
@@ -114,24 +111,20 @@ async def play(_, message: Message):
                 "**Tidak Ada Batas yang Ditetapkan untuk Panggilan Video**\n\nTetapkan Batas Jumlah Panggilan Video Maksimum yang diizinkan di Bot dengan /set_video_limit [Khusus Pengguna Sudo]"
             )
         count = len(await get_active_video_chats())
-        if int(count) == int(limit):
-            if await is_active_video_chat(message.chat.id):
-                pass
-            else:
-                return await message.reply_text(
-                    "Maaf! Bot hanya mengizinkan panggilan video dalam jumlah terbatas karena masalah kelebihan CPU. Banyak obrolan lain menggunakan panggilan video sekarang. Coba beralih ke audio atau coba lagi nanti"
-                )
+        if int(count) == int(limit) and not await is_active_video_chat(
+            message.chat.id
+        ):
+            return await message.reply_text(
+                "Maaf! Bot hanya mengizinkan panggilan video dalam jumlah terbatas karena masalah kelebihan CPU. Banyak obrolan lain menggunakan panggilan video sekarang. Coba beralih ke audio atau coba lagi nanti"
+            )
         mystic = await message.reply_text(
             "🔄 Memproses Video... Harap Tunggu!"
         )
         try:
-            read = db_mem[message.chat.id]["live_check"]
-            if read:
+            if read := db_mem[message.chat.id]["live_check"]:
                 return await mystic.edit(
                     "Pemutaran Live Streaming... Hentikan untuk memutar musik"
                 )
-            else:
-                pass
         except:
             pass
         file = await telegram_download(message, mystic)
@@ -199,14 +192,11 @@ async def Music_Stream(_, CallbackQuery):
     if CallbackQuery.message.chat.id not in db_mem:
         db_mem[CallbackQuery.message.chat.id] = {}
     try:
-        read1 = db_mem[CallbackQuery.message.chat.id]["live_check"]
-        if read1:
+        if read1 := db_mem[CallbackQuery.message.chat.id]["live_check"]:
             return await CallbackQuery.answer(
                 "Pemutaran Live Streaming... Hentikan untuk memutar musik",
                 show_alert=True,
             )
-        else:
-            pass
     except:
         pass
     callback_data = CallbackQuery.data.strip()
@@ -360,10 +350,7 @@ async def slider_query_results(_, CallbackQuery):
     what = str(what)
     type = int(type)
     if what == "F":
-        if type == 9:
-            query_type = 0
-        else:
-            query_type = int(type + 1)
+        query_type = 0 if type == 9 else int(type + 1)
         await CallbackQuery.answer("Getting Next Result", show_alert=True)
         (
             title,
@@ -383,10 +370,7 @@ async def slider_query_results(_, CallbackQuery):
             media=med, reply_markup=InlineKeyboardMarkup(buttons)
         )
     if what == "B":
-        if type == 0:
-            query_type = 9
-        else:
-            query_type = int(type - 1)
+        query_type = 9 if type == 0 else int(type - 1)
         await CallbackQuery.answer("Mendapatkan Hasil Sebelumnya", show_alert=True)
         (
             title,
