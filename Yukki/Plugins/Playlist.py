@@ -76,7 +76,6 @@ async def play_playlist_cmd(_, message):
                 ),
                 reply_markup=InlineKeyboardMarkup(buttons),
             )
-            return
         else:
             user_id = message.from_user.id
             user_name = message.from_user.first_name
@@ -88,7 +87,6 @@ async def play_playlist_cmd(_, message):
                 ),
                 reply_markup=InlineKeyboardMarkup(buttons),
             )
-            return
     else:
         userid = message.reply_to_message.from_user.id
         third_name = message.reply_to_message.from_user.first_name
@@ -104,7 +102,8 @@ async def play_playlist_cmd(_, message):
             ),
             reply_markup=InlineKeyboardMarkup(buttons),
         )
-        return
+
+    return
 
 
 @app.on_message(filters.command("playlist") & filters.group)
@@ -214,8 +213,9 @@ async def del_cmd(_, message):
                     )
                 else:
                     return await message.reply_text(
-                        f"**Tidak ada musik yang disimpan dalam daftar putar.**"
+                        '**Tidak ada musik yang disimpan dalam daftar putar.**'
                     )
+
         await message.reply_text("Anda tidak memiliki musik seperti itu di Daftar Putar.")
 
 
@@ -260,8 +260,9 @@ async def delgroupplaylist(_, message):
                     )
                 else:
                     return await message.reply_text(
-                        f"**Tidak ada musik yang disimpan seperti itu di daftar putar Grup.**"
+                        '**Tidak ada musik yang disimpan seperti itu di daftar putar Grup.**'
                     )
+
         await message.reply_text("Anda tidak memiliki musik seperti itu di Daftar Putar.")
 
 

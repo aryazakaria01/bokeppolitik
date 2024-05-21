@@ -111,9 +111,7 @@ async def start_live_stream(
     if not await join_live_stream(
         CallbackQuery.message.chat.id, link, quality
     ):
-        return await CallbackQuery.message.reply_text(
-            f"Error Joining Voice Chat."
-        )
+        return await CallbackQuery.message.reply_text('Error Joining Voice Chat.')
     await music_on(CallbackQuery.message.chat.id)
     await add_active_chat(CallbackQuery.message.chat.id)
     await add_active_video_chat(CallbackQuery.message.chat.id)
@@ -184,8 +182,9 @@ async def start_video_stream(
             CallbackQuery.message.chat.id, link, quality
         ):
             return await CallbackQuery.message.reply_text(
-                f"Kesalahan Bergabung dengan Obrolan Suara."
+                'Kesalahan Bergabung dengan Obrolan Suara.'
             )
+
         get_queue[CallbackQuery.message.chat.id] = []
         got_queue = get_queue.get(CallbackQuery.message.chat.id)
         title = title

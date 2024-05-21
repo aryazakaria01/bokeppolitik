@@ -14,11 +14,11 @@ def checker(mystic):
                 f"**Blacklisted Chat**\n\nObrolan Anda telah dimasukkan dalam daftar hitam oleh Pengguna Sudo. Minta __SUDO USER__ mana pun untuk masuk daftar putih.\nPeriksa Daftar Pengguna Sudo [Dari Sini](https://t.me/{BOT_USERNAME}?start=sudolist)"
             )
             return await app.leave_chat(message.chat.id)
-        if await is_on_off(1):
-            if int(message.chat.id) != int(LOG_GROUP_ID):
-                return await message.reply_text(
-                    f"Bot sedang dalam Pemeliharaan. Maaf untuk ketidaknyamanannya!"
-                )
+        if await is_on_off(1) and int(message.chat.id) != int(LOG_GROUP_ID):
+            return await message.reply_text(
+                'Bot sedang dalam Pemeliharaan. Maaf untuk ketidaknyamanannya!'
+            )
+
         if await is_gbanned_user(message.from_user.id):
             return await message.reply_text(
                 f"**Gbanned User**\n\nAnda dilarang menggunakan Bot. Minta __SUDO USER__ apa pun untuk ungban.\nPeriksa Daftar Pengguna Sudo [Dari Sini](https://t.me/{BOT_USERNAME}?start=sudolist)"
@@ -35,12 +35,13 @@ def checkerCB(mystic):
             return await CallbackQuery.answer(
                 "Blacklisted Chat", show_alert=True
             )
-        if await is_on_off(1):
-            if int(CallbackQuery.message.chat.id) != int(LOG_GROUP_ID):
-                return await CallbackQuery.answer(
-                    "Bot sedang dalam Pemeliharaan. Maaf untuk ketidaknyamanannya!",
-                    show_alert=True,
-                )
+        if await is_on_off(1) and int(CallbackQuery.message.chat.id) != int(
+            LOG_GROUP_ID
+        ):
+            return await CallbackQuery.answer(
+                "Bot sedang dalam Pemeliharaan. Maaf untuk ketidaknyamanannya!",
+                show_alert=True,
+            )
         if await is_gbanned_user(CallbackQuery.from_user.id):
             return await CallbackQuery.answer(
                 "Anda di-Gbanned", show_alert=True

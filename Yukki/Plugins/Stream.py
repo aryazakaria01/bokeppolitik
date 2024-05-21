@@ -33,18 +33,7 @@ from Yukki.Utilities.youtube import (get_m3u8, get_yt_info_id,
 loop = asyncio.get_event_loop()
 
 __MODULE__ = "VideoCalls"
-__HELP__ = f"""
-
-/play [Balas ke Video mana saja] atau [YOUTUBE Link] atau [Music Name]
-- Streaming Video di Obrolan Suara
-
-**Untuk Pengguna Sudo:-**
-
-/set_video_limit [Number of Chats]
-- Tetapkan Jumlah Obrolan maksimum yang diizinkan untuk Panggilan Video dalam satu waktu.
-
-
-"""
+__HELP__ = '\x1f\x1f/play [Balas ke Video mana saja] atau [YOUTUBE Link] atau [Music Name]\x1f- Streaming Video di Obrolan Suara\x1f\x1f**Untuk Pengguna Sudo:-**\x1f\x1f/set_video_limit [Number of Chats]\x1f- Tetapkan Jumlah Obrolan maksimum yang diizinkan untuk Panggilan Video dalam satu waktu.\x1f\x1f\x1f'
 
 
 @app.on_callback_query(filters.regex(pattern=r"Yukki"))
@@ -72,25 +61,21 @@ async def quality_markup(_, CallbackQuery):
             "**Tidak Ada Batas yang Ditetapkan untuk Panggilan Video**\n\nTetapkan Batas Jumlah Panggilan Video Maksimum yang diizinkan di Bot dengan /set_video_limit [Hanya Pengguna Sudo]"
         )
     count = len(await get_active_video_chats())
-    if int(count) == int(limit):
-        if await is_active_video_chat(CallbackQuery.message.chat.id):
-            pass
-        else:
-            return await CallbackQuery.answer(
-                "Maaf! Bot hanya mengizinkan panggilan video dalam jumlah terbatas karena masalah kelebihan CPU. Obrolan lain menggunakan panggilan video sekarang. Coba beralih ke audio atau coba lagi nanti",
-                show_alert=True,
-            )
+    if int(count) == int(limit) and not await is_active_video_chat(
+        CallbackQuery.message.chat.id
+    ):
+        return await CallbackQuery.answer(
+            "Maaf! Bot hanya mengizinkan panggilan video dalam jumlah terbatas karena masalah kelebihan CPU. Obrolan lain menggunakan panggilan video sekarang. Coba beralih ke audio atau coba lagi nanti",
+            show_alert=True,
+        )
     if CallbackQuery.message.chat.id not in db_mem:
         db_mem[CallbackQuery.message.chat.id] = {}
     try:
-        read1 = db_mem[CallbackQuery.message.chat.id]["live_check"]
-        if read1:
+        if read1 := db_mem[CallbackQuery.message.chat.id]["live_check"]:
             return await CallbackQuery.answer(
                 "Pemutaran Live Streaming... Hentikan untuk memutar musik",
                 show_alert=True,
             )
-        else:
-            pass
     except:
         pass
     await CallbackQuery.answer()
@@ -116,14 +101,13 @@ async def Live_Videos_Stream(_, CallbackQuery):
             "**Tidak Ada Batas yang Ditetapkan untuk Panggilan Video**\n\nTetapkan Batas Jumlah Panggilan Video Maksimum yang diizinkan di Bot dengan /set_video_limit [Khusus Pengguna Sudo]"
         )
     count = len(await get_active_video_chats())
-    if int(count) == int(limit):
-        if await is_active_video_chat(CallbackQuery.message.chat.id):
-            pass
-        else:
-            return await CallbackQuery.answer(
-                "Maaf! Bot hanya mengizinkan panggilan video dalam jumlah terbatas karena masalah kelebihan CPU. Obrolan lain menggunakan panggilan video sekarang. Coba beralih ke audio atau coba lagi nanti",
-                show_alert=True,
-            )
+    if int(count) == int(limit) and not await is_active_video_chat(
+        CallbackQuery.message.chat.id
+    ):
+        return await CallbackQuery.answer(
+            "Maaf! Bot hanya mengizinkan panggilan video dalam jumlah terbatas karena masalah kelebihan CPU. Obrolan lain menggunakan panggilan video sekarang. Coba beralih ke audio atau coba lagi nanti",
+            show_alert=True,
+        )
     if CallbackQuery.message.chat.id not in db_mem:
         db_mem[CallbackQuery.message.chat.id] = {}
     callback_data = CallbackQuery.data.strip()

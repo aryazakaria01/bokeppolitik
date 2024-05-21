@@ -47,9 +47,7 @@ __HELP__ = """
 @app.on_message(filters.new_chat_members, group=welcome_group)
 async def welcome(_, message: Message):
     chat_id = message.chat.id
-    if await is_served_chat(chat_id):
-        pass
-    else:
+    if not await is_served_chat(chat_id):
         await add_served_chat(chat_id)
     for member in message.new_chat_members:
         try:
